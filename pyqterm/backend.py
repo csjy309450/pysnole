@@ -5,6 +5,7 @@
 # which can be used by the widget.
 # License: GPL2
 import os
+import sys
 import fcntl
 import threading
 import time
@@ -15,6 +16,8 @@ import struct
 import select
 import subprocess
 
+import PyQt4.QtCore as QtCore
+import PyQt4.QtGui as QtGui
 import pyte
 
 __version__ = "0.1"
@@ -72,13 +75,16 @@ class Session(object):
         pass
 
 
-    def __init__(self, cmd="/bin/bash", env_term = "linux", timeout=60*60*24, size=(80,24)):
+    def __init__(self, parant_wid, cmd="/bin/bash", env_term = "linux", timeout=60*60*24, size=(80,25)):
         # Session
         self.session = {}
         self.cmd = cmd
         self.env_term = env_term
         self.timeout = timeout
         self.size = size
+        self.history_str = ''
+        self.cmd_str = ''
+        self.parant_wid = parant_wid
 
         # pyte
         self.stream = TagStream()
@@ -87,7 +93,7 @@ class Session(object):
 
         # Supervisor thread
         self.signal_stop = 0
-        self.thread = threading.Thread(target = self.proc_thread)
+        self.thread = threading.Thread(target=self.proc_thread)
 
 
     def stop(self):
@@ -191,7 +197,25 @@ class Session(object):
             self.proc_waitfordeath()
             return False
 
+        self.process_output(d)
         self.stream.feed(d)
+
+    def process_output(self, output):
+        """
+        test function, display input and output
+        :param output:
+        :return:
+        """
+        if output.endswith('\r\n'):
+            self.cmd_str+=output
+            self.parant_wid.w_list.addItem(QtGui.QListWidgetItem(QtCore.QString(self.cmd_str[0:len(self.cmd_str)-2])))
+            self.cmd_str=''
+            sys.stdout.write(self.history_str+'\n')
+        else:
+            self.cmd_str += output
+            sys.stdout.write(self.cmd_str + '\n')
+            self.parant_wid.w_list.addItem(QtGui.QListWidgetItem(QtCore.QString(self.cmd_str[0:len(self.cmd_str) - 1])))
+            self.cmd_str = ''
 
     @synchronized
     def write(self, d):

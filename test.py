@@ -14,9 +14,31 @@ class MainWidget(QMainWindow):
         # self.label.setGeometry(0, 31, 200, 200)
         # self.resize(205, 235)
         # self.edit.editingFinished.connect(self.On_editingFinished)
-        win = TerminalWidget(self)
-        win.resize(500, 1000)
+        # win = TerminalWidget(self)
+        # win.resize(1000, 1000)
+        self.resize(600, 600)
+        self.w_list = QListWidget(self)
+        self.w_list.setGeometry(0,0,600,500)
+        self.w_list.setAlternatingRowColors(True)
+        self.w_list.addItem(QListWidgetItem(QString('11111')))
+        self.w_list.addItem(QListWidgetItem(QString('22222')))
+        self.w_list.addItem(QListWidgetItem(QString('33333')))
+        self.w_list.addItem(QListWidgetItem(QString('44444')))
+
+        self.w_edit = QTextEdit(self)
+        self.w_edit.setGeometry(0,500,600,100)
+
+        self.w_edit.textChanged.connect(self.On_textchanged)
+
         self.show()
+
+    def On_textchanged(self):
+        # a = str(self.w_edit.toPlainText())
+        get_qtext = self.w_edit.toPlainText()
+        if get_qtext.endsWith('\n'):
+            # print str(self.w_edit.toPlainText())
+            self.w_list.addItem(QListWidgetItem(get_qtext.left(get_qtext.count()-1)))
+            self.w_edit.clear()
 
     def On_editingFinished(self):
         get_cmd = str(self.edit.text())
