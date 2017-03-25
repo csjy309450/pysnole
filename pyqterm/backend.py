@@ -82,7 +82,6 @@ class Session(object):
         self.env_term = env_term
         self.timeout = timeout
         self.size = size
-        self.history_str = ''
         self.cmd_str = ''
         self.parant_wid = parant_wid
 
@@ -198,7 +197,7 @@ class Session(object):
             return False
 
         self.process_output(d)
-        self.stream.feed(d)
+        # self.stream.feed(d)
 
     def process_output(self, output):
         """
@@ -206,16 +205,20 @@ class Session(object):
         :param output:
         :return:
         """
-        if output.endswith('\r\n'):
-            self.cmd_str+=output
-            self.parant_wid.w_list.addItem(QtGui.QListWidgetItem(QtCore.QString(self.cmd_str[0:len(self.cmd_str)-2])))
-            self.cmd_str=''
-            sys.stdout.write(self.history_str+'\n')
-        else:
-            self.cmd_str += output
-            sys.stdout.write(self.cmd_str + '\n')
-            self.parant_wid.w_list.addItem(QtGui.QListWidgetItem(QtCore.QString(self.cmd_str[0:len(self.cmd_str) - 1])))
-            self.cmd_str = ''
+        self.cmd_str += output
+        sys.stdout.write(self.cmd_str + '\n')
+        self.parant_wid.w_list.addItem(QtGui.QListWidgetItem(QtCore.QString(self.cmd_str[0:len(self.cmd_str) - 1])))
+        self.cmd_str = ''
+        # if output.endswith('\r\n'):
+        #     self.cmd_str += output
+        #     sys.stdout.write(self.cmd_str + '\n')
+        #     self.parant_wid.w_list.addItem(QtGui.QListWidgetItem(QtCore.QString(self.cmd_str[0:len(self.cmd_str)-2])))
+        #     self.cmd_str=''
+        # else:
+        #     self.cmd_str += output
+        #     sys.stdout.write(self.cmd_str + '\n')
+        #     self.parant_wid.w_list.addItem(QtGui.QListWidgetItem(QtCore.QString(self.cmd_str[0:len(self.cmd_str) - 1])))
+        #     self.cmd_str = ''
 
     @synchronized
     def write(self, d):
@@ -248,4 +251,4 @@ class Session(object):
 
         self.proc_bury()
 
-        self.stream.feed('\n[ exited ]')
+        # self.stream.feed('\n[ exited ]')
