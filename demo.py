@@ -11,7 +11,7 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     app = QApplication(sys.argv)
-    win = TerminalWidget()
+    win = TerminalWidget(command='/usr/bin/python2.7')
     win.show()
     app.exec_()
 

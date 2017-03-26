@@ -15,7 +15,7 @@ class MainWidget(QMainWindow):
         # self.resize(205, 235)
         # self.edit.editingFinished.connect(self.On_editingFinished)
         win = TerminalWidget(self)
-        win.resize(500, 1000)
+        win.resize(1000, 1000)
         self.show()
 
     def On_editingFinished(self):

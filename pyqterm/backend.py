@@ -87,7 +87,7 @@ class Session(object):
 
         # Supervisor thread
         self.signal_stop = 0
-        self.thread = threading.Thread(target = self.proc_thread)
+        self.thread = threading.Thread(target=self.proc_thread)
 
 
     def stop(self):
@@ -190,8 +190,13 @@ class Session(object):
             # Process finished, Linux
             self.proc_waitfordeath()
             return False
-
-        self.stream.feed(d)
+        # self.stream.feed(d)
+        if d=='[K':
+            self.stream.feed('\b')
+            self.stream.feed(' ')
+            self.stream.feed('\b')
+        else:
+            self.stream.feed(d)
 
     @synchronized
     def write(self, d):

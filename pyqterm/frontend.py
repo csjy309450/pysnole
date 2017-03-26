@@ -5,7 +5,7 @@ import time
 from PyQt4.QtCore import QRect, Qt, pyqtSignal, QByteArray
 from PyQt4.QtGui import (
        QApplication, QClipboard, QWidget, QPainter, QFont, QBrush, QColor, 
-       QPen, QPixmap, QImage, QContextMenuEvent)
+       QPen, QPixmap, QImage, QContextMenuEvent, QScrollArea, QPalette)
 
 from .backend import Session
 
@@ -90,8 +90,9 @@ class TerminalWidget(QWidget):
             self.widget.update()
 
     def __init__(self, parent=None, command="/bin/bash", 
-                 font_name="Monospace", font_size=18):
+                 font_name="Monospace", font_size=15, widSize=(800,500)):
         super(TerminalWidget, self).__init__(parent)
+        self.setFixedSize(widSize[0], widSize[1])
         self.setFocusPolicy(Qt.WheelFocus)
         self.setAutoFillBackground(False)
         self.setAttribute(Qt.WA_OpaquePaintEvent, True)
@@ -101,8 +102,9 @@ class TerminalWidget(QWidget):
         self.setFont(font)
         self._session = None
         self._draw_screen = self.Screen(self)
+        # self._draw_screen = self.Screen(self.w_srcoll_area)
         self.setupPainters()
-        self.execute()
+        self.execute(command)
 
     def setupPainters(self):
         self._pen, self._brash = {}, {}
@@ -155,7 +157,9 @@ class TerminalWidget(QWidget):
         
     def resizeEvent(self, event):
         self._columns, self._rows = self._pixel2pos(self.width(), self.height())
+        ## 调整session的尺寸，但有bug
         self._session.resize(self._columns, self._rows)
+        # self._session.resize(500, 500)
 
         self._margins = [
             QRect(
